@@ -13,17 +13,16 @@ exports.needs = nest({
 exports.gives = nest('bookmark.obs.bookmark')
 
 exports.create = function(api) {
-  return nest('bookmark.obs.bookmark', function(bookmarkId) {
-    if (!ref.isLink(bookmarkId)) throw new Error('an id must be specified')
+  return nest('bookmark.obs.bookmark', function(messageId) {
+    if (!ref.isLink(messageId)) throw new Error('an id must be specified')
 
     const { latestValue, valueFrom } = api.about.obs
     const id = api.keys.sync.id()
 
     const bookmark = api.bookmark.obs.struct({
-      title: latestValue(bookmarkId, 'title'),
-      description: latestValue(bookmarkId, 'description'),
-      messageId: latestValue(bookmarkId, 'messageId'),
-      tags: valueFrom(bookmarkId, 'tags', id)
+      name: latestValue(messageId, 'name'),
+      description: latestValue(messageId, 'description'),
+      tags: computed([groupedValues(messageId, 'tags')], Object.keys)
     })
 
     return bookmark

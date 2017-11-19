@@ -3,14 +3,25 @@ const defer = require('pull-defer')
 const pull = require('pull-stream')
 const onceTrue = require('mutant/once-true')
 
-exports.gives = nest('bookmark.pull.find')
+exports.gives = nest({
+  'bookmark.pull.find': true,
+  'bookmark.pull.findPublic': true
+})
 
 exports.needs = nest({
-  'sbot.obs.connection': 'first'
+  'sbot.obs.connection': 'first',
+  'sbot.pull.messagesByType': 'first'
 })
 
 exports.create = function(api) {
-  return nest({ 'bookmark.pull.find': find })
+  const { messagesByType } = api.sbot.pull
+
+  return nest({ 
+    'bookmark.pull.': {
+      'find': find,
+      'findPublic': findPublic
+    }
+  })
 
   function find(opts) {
     // handle last item passed in as lt
@@ -33,8 +44,24 @@ exports.create = function(api) {
       return sbot.private.read(opts)
     })
   }
-}
 
+  function findPublic(opts) {
+    const _opts = Object.assign(
+      {},
+      {
+        live: true,
+        future: true,
+        past: false
+      },
+      opts,
+      { type: 'bookmark' }
+    )
+    return pull(
+      messagesByType(_opts),
+      pull.filter(bookmark => bookmark)
+    )
+  }
+}
 
 // COPIED from patchcore 'feed.pull.private'
 function StreamWhenConnected (connection, fn) {

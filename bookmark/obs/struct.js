@@ -15,9 +15,8 @@ exports.gives = nest('bookmark.obs.struct')
 exports.create = function(api) {
   return nest('bookmark.obs.struct', function(opts = {}) {
     const struct = Struct({
-      title: Value(''),
+      name: Value(''),
       description: Value(''),
-      messageId: Value(''),
       tags: Set([])
     })
 
@@ -29,11 +28,12 @@ exports.create = function(api) {
     })
 
     struct.save = id => {
-      forEachPair(struct, (k, v) => {
-        if (api.bookmark.async[k] && v) {
-          api.bookmark.async[k]({[k]: v, bookmark: id}, console.log)
-        }
-      })
+      api.bookmark.async.save({
+        messageId: id,
+        name: struct.name(),
+        description: struct.description(),
+        tags: struct.tags()
+      }, console.log)
     }
 
     return struct
