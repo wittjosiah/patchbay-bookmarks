@@ -1,4 +1,4 @@
-const { h, Value, when, computed } = require('mutant')
+const { h, Value, when, computed, map } = require('mutant')
 const nest = require('depnest')
 
 exports.needs = nest({
@@ -7,28 +7,21 @@ exports.needs = nest({
   'feed.html.render': 'first',
   'keys.sync.load': 'first',
   'about.html.link': 'first',
-  'about.html.image': 'first',
+  'bookmark.html.action': 'map',
   'message.html': {
     decorate: 'reduce',
-    link: 'first',
-    markdown: 'first',
-    backlinks: 'first',
-    meta: 'map',
-    action: 'map',
     timestamp: 'first',
   },
 })
 
 exports.gives = nest({
-  'message.html': [ 'render' ],
+  // 'message.html': [ 'render' ],
   'bookmark.html': [ 'render' ]
 })
 
 exports.create = function(api) {
-  const { timestamp, meta, backlinks, action } = api.message.html
-
   return nest({
-    'message.html.render': renderBookmark,
+    // 'message.html.render': renderBookmark,
     'bookmark.html.render': renderBookmark
   })
 
@@ -36,15 +29,14 @@ exports.create = function(api) {
     if (!msg.value || (msg.value.content.type !== 'bookmark')) return
 
     const bookmark = api.bookmark.obs.bookmark(msg.key)
+    console.log(bookmark())
 
     const content = [
       h('a', { href: bookmark.messageId }, [
         h('.details', [
           h('Title', bookmark.title),
           h('Description', bookmark.description),
-          h('Tags', bookmark.tags().map(tag =>
-            h('Tag', tag)
-          ))
+          h('Tags', map(bookmark.tags, tag => h('Tag', tag)))
         ])
       ])
     ]
@@ -52,12 +44,9 @@ exports.create = function(api) {
     const message = h(
       'Message -bookmark',
       [
-        h('section.avatar', {}, api.about.html.image(msg.value.author)),
-        h('section.timestamp', {}, timestamp(msg)),
-        h('section.meta', {}, meta(msg)),
+        h('section.timestamp', {}, api.message.html.timestamp(msg)),
         h('section.content', {}, content),
-        h('section.actions', {}, action(msg)),
-        h('footer.backlinks', {}, backlinks(msg))
+        h('section.actions', {}, api.bookmark.html.action(msg))
       ]
     )
 
