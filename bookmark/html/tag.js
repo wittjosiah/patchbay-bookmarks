@@ -17,12 +17,10 @@ exports.create = (api) => {
       console.log(bookmark())
       var tagged = computed([bookmark.tags, tagValue], isTagged)
       return when(tagged,
-        h('a.undoAction', {
-          href: '#',
+        h('button.undoAction', {
           'ev-click': () => publishAction(msg, bookmark.tags, tagValue, false)
         }, undoActionText),
-        h('a.doAction', {
-          href: '#',
+        h('button.doAction', {
           'ev-click': () => publishAction(msg, bookmark.tags, tagValue, true)
         }, doActionText)
       )

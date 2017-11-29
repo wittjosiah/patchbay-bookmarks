@@ -52,22 +52,22 @@ exports.create = function(api) {
       })
     }, 'Save')
 
-    const messageInput = h('input', {
+    const messageInput = h('input.message', {
       placeholder: 'id of message to save',
       'ev-keyup': e => bookmark.messageId.set(e.target.value)
     })
 
-    const titleInput = h('input', {
+    const titleInput = h('input.title', {
       placeholder: 'title of message',
       'ev-keyup': e => bookmark.title.set(e.target.value)
     })
 
-    const descriptionInput = h('input', {
+    const descriptionInput = h('textarea', {
       placeholder: 'description of message',
       'ev-keyup': e => bookmark.description.set(e.target.value)
     })
 
-    const tagsInput = h('input', {
+    const tagsInput = h('input.tags', {
       placeholder: 'message tags (comma separated)',
       'ev-keyup': e => bookmark.tags.set(e.target.value)
     })
@@ -78,7 +78,8 @@ exports.create = function(api) {
       h('i', { classList: when(publicState, 'fa fa-check-square-o', 'fa fa-square-o') })
     ])
 
-    const composer = h('div', [
+    const composer = h('CreateBookmark', [
+      h('h2', 'Create a Bookmark'),
       createButton,
       messageInput,
       titleInput,

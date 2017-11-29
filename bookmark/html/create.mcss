@@ -1,0 +1,54 @@
+CreateBookmark {
+  height: 13.5rem
+  border-bottom: 1px solid gray
+  position: relative
+
+  input {
+    border: 1px solid gray
+    padding: .6rem
+    font-size: .9rem
+    box-sizing: border-box
+  }
+
+  input.message {
+    width: 25%
+    margin-right: .6rem
+  }
+
+  input.title {
+    width: calc(75% - .6rem)
+  }
+
+  input.tags {
+    position: absolute
+    left: 0
+    bottom: 1.2rem
+    width: 50%
+  }
+
+  textarea {
+    width: 100%
+    border: 1px solid gray
+    padding: .6rem
+    font-size: .9rem
+    resize: none
+    margin: 10px 0
+    box-sizing: border-box
+  }
+
+  button {
+    position: absolute
+    bottom: 1.2rem
+    right: .6rem
+  }
+}
+
+PublicToggle {
+  position: absolute
+  right: 4.2rem
+  bottom: 1.7rem
+
+  label {
+    margin-right: .2rem
+  }
+}

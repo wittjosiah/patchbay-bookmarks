@@ -32,17 +32,18 @@ exports.create = function(api) {
     console.log(bookmark())
 
     const content = [
-      h('a', { href: bookmark.messageId }, [
-        h('.details', [
-          h('Title', bookmark.title),
-          h('Description', bookmark.description),
-          h('Tags', map(bookmark.tags, tag => h('Tag', tag)))
-        ])
+      h('Details', [
+        h('a', { href: bookmark.messageId }, [
+          h('div.title', bookmark.title)
+        ]),
+        h('div.description', bookmark.description),
+        h('div.tags', map(bookmark.tags, tag => h('Tag', tag)))
       ])
+      
     ]
 
     const message = h(
-      'Message -bookmark',
+      'Bookmark',
       [
         h('section.timestamp', {}, api.message.html.timestamp(msg)),
         h('section.content', {}, content),
