@@ -20,12 +20,8 @@ SaveBookmark {
   }
 
   input.message {
-    width: 25%
+    width: 100%
     margin-right: .6rem
-  }
-
-  input.title {
-    width: calc(75% - .6rem)
   }
 
   input.tags {

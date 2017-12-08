@@ -19,8 +19,7 @@ exports.create = function(api) {
     const { latestValue, valueFrom, groupedValues } = api.about.obs
 
     const bookmark = api.bookmark.obs.struct({
-      title: latestValue(messageId, 'title'),
-      description: latestValue(messageId, 'description'),
+      notes: latestValue(messageId, 'notes'),
       tags: valueFrom(messageId, 'tags', id),
       recps: latestValue(messageId, 'recps')
     })

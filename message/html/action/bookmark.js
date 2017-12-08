@@ -41,17 +41,15 @@ exports.create = (api) => {
       tags.push('Archived')
     }
 
-    var title
+    var notes = ""
     if (msg.value && msg.value.content && msg.value.content.text) {
-      title = msg.value.content.text.substring(0, 30) + "..."
-    } else {
-      title = "Untitled"
+      notes = msg.value.content.text.substring(0, 30) + "..."
     }
 
     api.bookmark.async.save({
       messageId: msg.key,
       recps,
-      title,
+      notes,
       tags
     }, console.log)
   }

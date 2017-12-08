@@ -5,25 +5,25 @@ exports.needs = nest({
   'message.html.markdown': 'first'
 })
 
-exports.gives = nest('bookmark.html.description')
+exports.gives = nest('bookmark.html.notes')
 
 exports.create = (api) => {
-  return nest('bookmark.html.description', description)
-  function description ({ description, isEditing, onUpdate }) {
+  return nest('bookmark.html.notes', notes)
+
+  function notes ({ notes, isEditing, onUpdate }) {
     const markdown = api.message.html.markdown
     const input = h(
       'textarea',
       {
         'ev-input': e => onUpdate(e.target.value),
-        'value': description 
+        'value': notes 
       }
     )
-
-    return h('Description', [
+    return h('Notes', [
       when(
         isEditing,
         input,
-        computed(description, d => d ? markdown(d) : '')
+        computed(notes, d => d ? markdown(d) : '')
       )
     ])
   }

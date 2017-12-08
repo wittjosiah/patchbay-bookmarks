@@ -9,13 +9,12 @@ exports.needs = nest({
 
 exports.create = function(api) {
   return nest('bookmark.async.save', function(data, cb) {
-    const { messageId, recps, title, description, tags } = data
+    const { messageId, recps, notes, tags } = data
     api.sbot.async.publish({
       type: 'about',
       about: messageId,
       recps,
-      title,
-      description,
+      notes,
       tags
     }, cb)
   })

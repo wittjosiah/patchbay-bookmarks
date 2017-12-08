@@ -3,59 +3,68 @@ const nest = require('depnest')
 const ref = require('ssb-ref')
 
 exports.needs = nest({
+  'about.html.avatar': 'first',
   'bookmark.obs.bookmark': 'first',
   'bookmark.html': {
-    'action': 'map',
-    'tag': 'first'
+    action: 'map',
+    tag: 'first'
   },
   'message.html': {
-    decorate: 'reduce',
-    timestamp: 'first',
+    author: 'first',
+    link: 'first',
+    markdown: 'first',
   },
   'keys.sync.id': 'first'
 })
 
-exports.gives = nest({
-  // 'message.html': [ 'render' ],
-  'bookmark.html': [ 'render' ]
-})
+exports.gives = nest('bookmark.html.render')
 
 exports.create = function(api) {
   return nest({
-    // 'message.html.render': renderBookmark,
     'bookmark.html.render': renderBookmark
   })
 
   function renderBookmark(msg, { pageId } = {}) {
     const id = api.keys.sync.id()
     const bookmark = api.bookmark.obs.bookmark(msg.key, id)
-    console.log('BKMK', bookmark())
 
     const content = [
-      h('Details', [
-        h('a', { href: bookmark.messageId }, [
-          h('div.title', bookmark.title)
-        ]),
-        h('div.description', bookmark.description),
-        h('div.tags', map(bookmark.tags, tag => api.bookmark.html.tag(tag)))
+      h('Saved', [
+        h('section.avatar', {}, api.about.html.avatar(msg.value.author)),
+        h('section.author', {}, api.message.html.author(msg)),
+        h('section.title', {}, messageTitle(msg)),
+        h('section.content', {}, messageContent(msg)),
       ])
     ]
 
-    const view = h(
+    return h(
       'Bookmark',
+      { attributes: { tabindex: '0' } },
       [
-        h('section.timestamp', {}, api.message.html.timestamp(msg)),
-        h('section.content', {}, content),
+        h('section.message', {}, content),
+        h('section.tags', map(bookmark.tags, tag => api.bookmark.html.tag(tag))),
+        h('section.notes', computed([bookmark.notes], messageNotes)),
         h('section.actions', {}, api.bookmark.html.action(msg.key))
       ]
     )
+  }
 
-    const element = h(
-      'div',
-      { attributes: { tabindex: '0' } },
-      view
-    )
+  function messageContent (data) {
+    if (!data.value.content || !data.value.content.text) return
+    return h('div', {}, api.message.html.markdown(data.value.content))
+  }
 
-    return api.message.html.decorate(element, { msg })
+  function messageTitle (data) {
+    var root = data.value.content && data.value.content.root
+    return !root ? null : h('span', ['re: ', api.message.html.link(root)])
+  }
+
+  function messageNotes (data) {
+    console.log(data)
+    if (!data) return
+    return h('div', {}, [
+      h('h4', 'Notes'),
+      api.message.html.markdown(data)
+    ])
   }
 }

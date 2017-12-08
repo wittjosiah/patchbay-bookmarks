@@ -18,6 +18,46 @@ Bookmark {
     }
   }
 
+  section.message {
+    width: 100%
+  }
+
+  section.notes {
+    width: 100%
+  }
+
+  section.tags {
+    width: 100%
+  }
+
+  section.actions {
+    position: absolute
+    right: .5rem
+    top: 1.5rem
+    font-size: .9rem
+  }
+}
+
+Saved {
+  padding: 1rem .5rem 1rem 6rem
+  position: relative
+  display: flex
+  flex-direction: row
+  flex-wrap: wrap
+  justify-content: flex-end
+
+  section.avatar {
+    position: absolute
+    left: .5rem
+    
+    a img {
+    }
+  }
+
+  section.author {
+    flex-basis: 100%
+  }
+
   section.title {
     flex-basis: 100%
     font-size: .9rem
@@ -34,38 +74,5 @@ Bookmark {
     (img) {
       max-width: 100%
     }
-  }
-
-  section.actions {
-    flex-basis: 100%
-    display: flex
-    justify-content: flex-end
-
-    font-size: .9rem
-    a {
-      margin-left: .5em
-    }
-
-    a.unlike {
-      $textSubtle
-    }
-  }
-}
-
-Details {
-  div {
-    color: black
-  }
-
-  a {
-    div.title {
-      font-size: 1.2rem
-      color: black
-      margin-bottom: .5rem
-    }
-  }
-
-  div.tags {
-    margin: 1rem 0 .5rem 0
   }
 }

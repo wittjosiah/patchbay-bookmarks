@@ -17,8 +17,7 @@ exports.create = function(api) {
     var open = Value(false)
     var bookmark = Struct({
       messageId: Value(),
-      title: Value(),
-      description: Value(),
+      notes: Value(),
       tags: Value(),
       public: Value()
     })
@@ -33,8 +32,7 @@ exports.create = function(api) {
       api.bookmark.async.save({
         recps: bookmark.public() ? null : [ id ],
         messageId: bookmark.messageId(),
-        title: bookmark.title(),
-        description: bookmark.description(),
+        notes: bookmark.notes(),
         tags: bookmark.tags().split(',').map(tag => tag.trim())
       }, console.log)
     }, 'Save')
@@ -44,14 +42,9 @@ exports.create = function(api) {
       'ev-keyup': e => bookmark.messageId.set(e.target.value)
     })
 
-    const titleInput = h('input.title', {
-      placeholder: 'title of message',
-      'ev-keyup': e => bookmark.title.set(e.target.value)
-    })
-
-    const descriptionInput = h('textarea', {
-      placeholder: 'description of message',
-      'ev-keyup': e => bookmark.description.set(e.target.value)
+    const notesInput = h('textarea', {
+      placeholder: 'notes about message',
+      'ev-keyup': e => bookmark.notes.set(e.target.value)
     })
 
     const tagsInput = h('input.tags', {
@@ -74,8 +67,7 @@ exports.create = function(api) {
           cancelButton,
           saveButton,
           messageInput,
-          titleInput,
-          descriptionInput,
+          notesInput,
           tagsInput,
           publicInput
         ]

@@ -24,7 +24,8 @@ exports.needs = nest({
     render: 'first',
     tags: 'first'
   },
-  'keys.sync.id': 'first'
+  'keys.sync.id': 'first',
+  'sbot.async.get': 'first'
 })
 
 exports.create = function(api) {
@@ -45,14 +46,11 @@ exports.create = function(api) {
     const tag = path['tag'] || 'Reading List'
 
     const creator = api.bookmark.html.save({})
-    const defaultTags = [ 'Reading List', 'Read', 'Favourite', 'Archived' ]
+    const defaultTags = [ 'Reading List', 'Read', 'Favourites', 'Archived' ]
     const tagSelector = api.bookmark.html.tags(
       computed(
         [api.bookmark.obs.tagsFrom(id)],
-        tags => {
-          console.log('TAGS', tags)
-          return tags.filter(t => defaultTags.indexOf(t) < 0)
-        }
+        tags => tags.filter(t => defaultTags.indexOf(t) < 0)
       )
     )
     const currentTag = h('h2', tag)
@@ -88,6 +86,13 @@ exports.create = function(api) {
         return msgs
       }),
       pull.flatten(),
+      pull.map(msg => msg.key),
+      pull.asyncMap((key, cb) => {
+        api.sbot.async.get(key, (_, value) => {
+          const msg = { key, value }
+          cb(null, msg)
+        })
+      }),
       Scroller(container, content, api.bookmark.html.render, false, false)
     )
 

@@ -10,8 +10,7 @@ exports.gives = nest('bookmark.obs.struct')
 exports.create = function(api) {
   return nest('bookmark.obs.struct', function(opts = {}) {
     const struct = Struct({
-      title: Value(''),
-      description: Value(''),
+      notes: Value(''),
       tags: Set([]),
       recps: Set([])
     })
@@ -27,8 +26,7 @@ exports.create = function(api) {
       api.bookmark.async.save({
         recps: struct.recps(),
         messageId: id,
-        title: struct.title(),
-        description: struct.description(),
+        notes: struct.notes(),
         tags: struct.tags()
       }, console.log)
     }
