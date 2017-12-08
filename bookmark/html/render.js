@@ -29,15 +29,13 @@ exports.create = function(api) {
   function renderBookmark(msg, { pageId } = {}) {
     const id = api.keys.sync.id()
     const bookmark = api.bookmark.obs.bookmark(msg.key, id)
-    console.log('BKMK', bookmark())
+    const message = api.message.html.render(msg)
 
     const content = [
       h('Details', [
-        h('a', { href: bookmark.messageId }, [
-          h('div.title', bookmark.title)
-        ]),
-        h('div.description', bookmark.description),
-        h('div.tags', map(bookmark.tags, tag => api.bookmark.html.tag(tag)))
+        h('div.notes', bookmark.notes),
+        h('div.tags', map(bookmark.tags, tag => api.bookmark.html.tag(tag))),
+        message
       ])
     ]
 
