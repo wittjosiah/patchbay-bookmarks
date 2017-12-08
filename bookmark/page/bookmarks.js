@@ -36,13 +36,13 @@ exports.create = function(api) {
   function menuItem(handleClick) {
     return h('a', {
       style: { order: 0 },
-      'ev-click': () => handleClick({ page: 'bookmarks', tag: 'toread' })
+      'ev-click': () => handleClick({ page: 'bookmarks', tag: 'readinglist' })
     }, '/bookmarks')
   }
   
   function bookmarksPage(path) {
     const id = api.keys.sync.id()
-    const tag = path['tag'] || 'toread'
+    const tag = path['tag'] || 'readinglist'
 
     const creator = api.bookmark.html.save({})
     const tagSelector = api.bookmark.html.tags(api.bookmark.obs.tagsFrom(id))
@@ -56,13 +56,21 @@ exports.create = function(api) {
       pull.map(index => {
         const msgs = []
         for (const msg in index[id]['tags'][tag]) {
-          msgs.push({
-            key: msg,
-            value: {
-              content: {},
-              timestamp: index[id]['tags'][tag][msg]
-            }
-          })
+          // Hide 'archived' messages unless viewing 'archived' tag
+          // Hide 'read' messages from 'readinglist' tag
+          if (
+            !index[id]['tags']['archived'][msg] ||
+            tag === 'archived' || 
+            (tag === 'readinglist' && !index[id]['tags']['read'][msg])
+          ) {
+            msgs.push({
+              key: msg,
+              value: {
+                content: {},
+                timestamp: index[id]['tags'][tag][msg]
+              }
+            })
+          }
         }
         msgs.sort((a, b) => a.value.timestamp < b.value.timestamp)
         return msgs

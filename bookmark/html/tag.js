@@ -8,9 +8,9 @@ exports.needs = nest({
 exports.gives = nest('bookmark.html.tag')
 
 exports.create = (api) => {
-  return nest('bookmark.html.tag', tag =>
+  return nest('bookmark.html.tag', (tag, display) =>
     h('Tag', {
       'ev-click': () => api.app.sync.goTo({ page: 'bookmarks', tag: tag })
-    }, tag)
+    }, display || tag)
   )
 }

@@ -33,7 +33,7 @@ exports.create = (api) => {
       tags = currentTags.filter(t => t !== 'archived')
     } else if (status) {
       tags = currentTags
-      tags.push('toread')
+      tags.push('readinglist')
     } else {
       tags = currentTags
       tags.push('archived')
