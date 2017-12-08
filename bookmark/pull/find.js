@@ -17,31 +17,31 @@ exports.create = function(api) {
   const { messagesByType } = api.sbot.pull
 
   return nest({ 
-    'bookmark.pull.': {
+    'bookmark.pull': {
       'find': find,
       'findPublic': findPublic
     }
   })
 
   function find(opts) {
-    // handle last item passed in as lt
-    var lt = (opts.lt && opts.lt.value)
-      ? opts.lt.timestamp
-      : opts.lt
-    delete opts.lt
+    // // handle last item passed in as lt
+    // var lt = (opts.lt && opts.lt.value)
+    //   ? opts.lt.timestamp
+    //   : opts.lt
+    // delete opts.lt
 
-    // HACK: needed to select correct index and handle lt
-    opts.query = [
-      {$filter: {
-        timestamp: typeof lt === 'number'
-          ? {$lt: lt, $gt: 0}
-          : {$gt: 0}
-      }}
-    ]
+    // // HACK: needed to select correct index and handle lt
+    // opts.query = [
+    //   {$filter: {
+    //     timestamp: typeof lt === 'number'
+    //       ? {$lt: lt, $gt: 0}
+    //       : {$gt: 0}
+    //   }}
+    // ]
 
     return StreamWhenConnected(api.sbot.obs.connection, (sbot) => {
-      if (!sbot.private || !sbot.private.read) return pull.empty()
-      return sbot.private.read(opts)
+      if (!sbot.about || !sbot.about.tagsStream) return pull.empty()
+      return sbot.about.tagsStream(opts)
     })
   }
 

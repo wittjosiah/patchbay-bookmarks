@@ -2,12 +2,7 @@ const nest = require('depnest')
 const { Value, Set, Struct, forEachPair } = require('mutant')
 
 exports.needs = nest({
-  'bookmark.async': {
-    'title': 'first',
-    'description': 'first',
-    'messageId': 'first',
-    'tags': 'first'
-  }
+  'bookmark.async.save': 'first'
 })
 
 exports.gives = nest('bookmark.obs.struct')
@@ -15,9 +10,10 @@ exports.gives = nest('bookmark.obs.struct')
 exports.create = function(api) {
   return nest('bookmark.obs.struct', function(opts = {}) {
     const struct = Struct({
-      name: Value(''),
+      title: Value(''),
       description: Value(''),
-      tags: Set([])
+      tags: Set([]),
+      recps: Set([])
     })
 
     Object.keys(opts).forEach(k => {
@@ -29,8 +25,9 @@ exports.create = function(api) {
 
     struct.save = id => {
       api.bookmark.async.save({
+        recps: struct.recps(),
         messageId: id,
-        name: struct.name(),
+        title: struct.title(),
         description: struct.description(),
         tags: struct.tags()
       }, console.log)

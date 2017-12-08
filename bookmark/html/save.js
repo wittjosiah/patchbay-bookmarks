@@ -4,28 +4,36 @@ const nest = require('depnest')
 exports.needs = nest({
   'bookmark.async.save': 'first',
   'blob.html.input': 'first',
-  'message.html.confirm': 'first'
+  'message.html.confirm': 'first',
+  'keys.sync.id': 'first'
 })
 
-exports.gives = nest('bookmark.html.create')
+exports.gives = nest('bookmark.html.save')
 
 exports.create = function(api) {
-  return nest({ 'bookmark.html.create': create })
+  return nest({ 'bookmark.html.save': create })
 
   function create() {
+    var open = Value(false)
     var bookmark = Struct({
       messageId: Value(),
-      name: Value(),
+      title: Value(),
       description: Value(),
       tags: Value(),
       public: Value()
     })
 
-    const createButton = h('button', { 'ev-click': () =>
+    const id = api.keys.sync.id()
+
+    const cancelButton = h('button.cancel', {
+      'ev-click': () => open.set(false)
+    }, 'Cancel')
+
+    const saveButton = h('button.save', { 'ev-click': () =>
       api.bookmark.async.save({
-        public: bookmark.public(),
+        recps: bookmark.public() ? null : [ id ],
         messageId: bookmark.messageId(),
-        name: bookmark.name(),
+        title: bookmark.title(),
         description: bookmark.description(),
         tags: bookmark.tags().split(',').map(tag => tag.trim())
       }, console.log)
@@ -36,9 +44,9 @@ exports.create = function(api) {
       'ev-keyup': e => bookmark.messageId.set(e.target.value)
     })
 
-    const nameInput = h('input.title', {
-      placeholder: 'name of message',
-      'ev-keyup': e => bookmark.name.set(e.target.value)
+    const titleInput = h('input.title', {
+      placeholder: 'title of message',
+      'ev-keyup': e => bookmark.title.set(e.target.value)
     })
 
     const descriptionInput = h('textarea', {
@@ -57,15 +65,28 @@ exports.create = function(api) {
       h('i', { classList: when(publicState, 'fa fa-check-square-o', 'fa fa-square-o') })
     ])
 
-    const composer = h('CreateBookmark', [
-      h('h2', 'Create a Bookmark'),
-      createButton,
-      messageInput,
-      nameInput,
-      descriptionInput,
-      tagsInput,
-      publicInput
-    ])
+    const composer = when(
+      open,
+      h(
+        'SaveBookmark',
+        [
+          h('h2', 'Save a Bookmark'),
+          cancelButton,
+          saveButton,
+          messageInput,
+          titleInput,
+          descriptionInput,
+          tagsInput,
+          publicInput
+        ]
+      ),
+      h(
+        'SaveBookmarkClosed',
+        h('button.open', {
+          'ev-click': () => open.set(true)
+        }, 'Save a Bookmark')
+      )
+    )
 
     return composer
   }

@@ -1,17 +1,18 @@
 const { h, Value, when, computed, map } = require('mutant')
 const nest = require('depnest')
+const ref = require('ssb-ref')
 
 exports.needs = nest({
-  'blob.sync.url': 'first',
   'bookmark.obs.bookmark': 'first',
-  'feed.html.render': 'first',
-  'keys.sync.load': 'first',
-  'about.html.link': 'first',
-  'bookmark.html.action': 'map',
+  'bookmark.html': {
+    'action': 'map',
+    'tag': 'first'
+  },
   'message.html': {
     decorate: 'reduce',
     timestamp: 'first',
   },
+  'keys.sync.id': 'first'
 })
 
 exports.gives = nest({
@@ -26,10 +27,9 @@ exports.create = function(api) {
   })
 
   function renderBookmark(msg, { pageId } = {}) {
-    if (!msg.value || (msg.value.content.type !== 'bookmark')) return
-
-    const bookmark = api.bookmark.obs.bookmark(msg.key)
-    console.log(bookmark())
+    const id = api.keys.sync.id()
+    const bookmark = api.bookmark.obs.bookmark(msg.key, id)
+    console.log('BKMK', bookmark())
 
     const content = [
       h('Details', [
@@ -37,24 +37,23 @@ exports.create = function(api) {
           h('div.title', bookmark.title)
         ]),
         h('div.description', bookmark.description),
-        h('div.tags', map(bookmark.tags, tag => h('Tag', tag)))
+        h('div.tags', map(bookmark.tags, tag => api.bookmark.html.tag(tag)))
       ])
-      
     ]
 
-    const message = h(
+    const view = h(
       'Bookmark',
       [
         h('section.timestamp', {}, api.message.html.timestamp(msg)),
         h('section.content', {}, content),
-        h('section.actions', {}, api.bookmark.html.action(msg))
+        h('section.actions', {}, api.bookmark.html.action(msg.key))
       ]
     )
 
     const element = h(
       'div',
       { attributes: { tabindex: '0' } },
-      message
+      view
     )
 
     return api.message.html.decorate(element, { msg })

@@ -9,23 +9,14 @@ exports.needs = nest({
 
 exports.create = function(api) {
   return nest('bookmark.async.save', function(data, cb) {
-    const { messageId, public, name, description, tags } = data
-    const recps = getRecps(api, data.public)
+    const { messageId, recps, title, description, tags } = data
     api.sbot.async.publish({
       type: 'about',
       about: messageId,
       recps,
-      name,
+      title,
       description,
       tags
     }, cb)
   })
-}
-
-function getRecps(api, public) {
-  if (public) {
-    return undefined
-  } else {
-    return [ api.keys.sync.id() ]
-  }
 }

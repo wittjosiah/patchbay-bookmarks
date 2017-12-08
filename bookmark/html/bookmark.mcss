@@ -69,12 +69,3 @@ Details {
     margin: 1rem 0 .5rem 0
   }
 }
-
-Tag {
-  display: inline-block
-  padding: .2rem .6rem
-  background-color: lightgray
-  border: 1px solid gray
-  border-radius: 2px
-  margin-right: .3rem
-}
