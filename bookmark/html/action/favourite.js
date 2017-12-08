@@ -10,6 +10,6 @@ exports.create = (api) => {
   return nest('bookmark.html.action', favourite)
   
   function favourite(msg) {
-    return api.bookmark.html.tagAction('favourite', 'Favourite', 'Unfavourite')(msg)
+    return api.bookmark.html.tagAction('Favourites', 'Favourite', 'Unfavourite')(msg)
   }
 }

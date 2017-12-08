@@ -10,6 +10,6 @@ exports.create = (api) => {
   return nest('bookmark.html.action', archive)
   
   function archive(msg) {
-    return api.bookmark.html.tagAction('archived', 'Archive', 'Unarchive')(msg)
+    return api.bookmark.html.tagAction('Archived', 'Archive', 'Unarchive')(msg)
   }
 }

@@ -29,14 +29,16 @@ exports.create = (api) => {
   function save (msg, recps, bookmarkTags, status = true) {
     var currentTags = bookmarkTags || []
     var tags
-    if (status && currentTags.includes('archived')) {
-      tags = currentTags.filter(t => t !== 'archived')
-    } else if (status) {
-      tags = currentTags
-      tags.push('toread')
+    if (status) {
+      if (currentTags.includes('Archived')) {
+        tags = currentTags.filter(t => t !== 'Archived')
+      } else {
+        tags = currentTags
+      }
+      tags.push('Reading List')
     } else {
       tags = currentTags
-      tags.push('archived')
+      tags.push('Archived')
     }
 
     var title
@@ -57,5 +59,5 @@ exports.create = (api) => {
 
 function isSaved (tags) {
   if (!tags || !tags.includes) return
-  return tags.length > 0 && !tags.includes('archived')
+  return tags.length > 0 && !tags.includes('Archived')
 }

@@ -36,16 +36,25 @@ exports.create = function(api) {
   function menuItem(handleClick) {
     return h('a', {
       style: { order: 0 },
-      'ev-click': () => handleClick({ page: 'bookmarks', tag: 'toread' })
+      'ev-click': () => handleClick({ page: 'bookmarks', tag: 'Reading List' })
     }, '/bookmarks')
   }
   
   function bookmarksPage(path) {
     const id = api.keys.sync.id()
-    const tag = path['tag'] || 'toread'
+    const tag = path['tag'] || 'Reading List'
 
     const creator = api.bookmark.html.save({})
-    const tagSelector = api.bookmark.html.tags(api.bookmark.obs.tagsFrom(id))
+    const defaultTags = [ 'Reading List', 'Read', 'Favourite', 'Archived' ]
+    const tagSelector = api.bookmark.html.tags(
+      computed(
+        [api.bookmark.obs.tagsFrom(id)],
+        tags => {
+          console.log('TAGS', tags)
+          return tags.filter(t => defaultTags.indexOf(t) < 0)
+        }
+      )
+    )
     const currentTag = h('h2', tag)
     const { container, content } = api.app.html.scroller({
       prepend: [ creator, tagSelector, currentTag ]
@@ -55,14 +64,25 @@ exports.create = function(api) {
       api.bookmark.pull.find(),
       pull.map(index => {
         const msgs = []
+        const archived = index[id]['tags']['Archived'] || {}
+        const read = index[id]['tags']['Read'] || {}
+
         for (const msg in index[id]['tags'][tag]) {
-          msgs.push({
-            key: msg,
-            value: {
-              content: {},
-              timestamp: index[id]['tags'][tag][msg]
-            }
-          })
+          // Hide 'Archived' messages unless viewing 'Archived' tag
+          // Hide 'Read' messages from 'Reading List' tag
+          const isArchived = archived[msg]
+          const isRead = read[msg]
+          if (tag !== 'Archived' && isArchived) continue
+          else if (tag === 'Reading List' && isRead) continue
+          else {
+            msgs.push({
+              key: msg,
+              value: {
+                content: {},
+                timestamp: index[id]['tags'][tag][msg]
+              }
+            })
+          }
         }
         msgs.sort((a, b) => a.value.timestamp < b.value.timestamp)
         return msgs

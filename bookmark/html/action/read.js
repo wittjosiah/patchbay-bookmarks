@@ -10,6 +10,6 @@ exports.create = (api) => {
   return nest('bookmark.html.action', read)
   
   function read(msg) {
-    return api.bookmark.html.tagAction('read', 'Read', 'Unread')(msg)
+    return api.bookmark.html.tagAction('Read', 'Read', 'Unread')(msg)
   }
 }
