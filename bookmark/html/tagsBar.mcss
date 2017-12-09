@@ -1,0 +1,7 @@
+TagsBar {
+  border-bottom: 1px solid gray
+
+  div {
+    margin-bottom: 1.5rem
+  } 
+}

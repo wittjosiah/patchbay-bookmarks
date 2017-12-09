@@ -10,7 +10,7 @@ exports.gives = nest('bookmark.html.notes')
 exports.create = (api) => {
   return nest('bookmark.html.notes', notes)
 
-  function notes ({ notes, isEditing, onUpdate }) {
+  function notes(notes, isEditing, onUpdate) {
     const markdown = api.message.html.markdown
     const input = h(
       'textarea',

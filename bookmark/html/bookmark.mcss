@@ -32,9 +32,23 @@ Bookmark {
 
   section.actions {
     position: absolute
-    right: .5rem
+    right: 3.1rem
     top: 1.5rem
     font-size: .9rem
+  }
+
+  button.edit {
+    position: absolute
+    right: 0
+    top: 1.5rem
+    font-size: .63rem
+  }
+
+  button.save {
+    position: absolute
+    right: 4.1rem
+    top: 1.5rem
+    font-size: .63rem
   }
 }
 

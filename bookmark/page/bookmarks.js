@@ -22,7 +22,7 @@ exports.needs = nest({
   'bookmark.html': {
     save: 'first',
     render: 'first',
-    tags: 'first'
+    tagsBar: 'first'
   },
   'keys.sync.id': 'first',
   'sbot.async.get': 'first'
@@ -47,7 +47,7 @@ exports.create = function(api) {
 
     const creator = api.bookmark.html.save({})
     const defaultTags = [ 'Reading List', 'Read', 'Favourites', 'Archived' ]
-    const tagSelector = api.bookmark.html.tags(
+    const tagsBar = api.bookmark.html.tagsBar(
       computed(
         [api.bookmark.obs.tagsFrom(id)],
         tags => tags.filter(t => defaultTags.indexOf(t) < 0)
@@ -55,7 +55,7 @@ exports.create = function(api) {
     )
     const currentTag = h('h2', tag)
     const { container, content } = api.app.html.scroller({
-      prepend: [ creator, tagSelector, currentTag ]
+      prepend: [ creator, tagsBar, currentTag ]
     })
 
     pull(
@@ -68,11 +68,9 @@ exports.create = function(api) {
         for (const msg in index[id]['tags'][tag]) {
           // Hide 'Archived' messages unless viewing 'Archived' tag
           // Hide 'Read' messages from 'Reading List' tag
-          const isArchived = archived[msg]
-          const isRead = read[msg]
-          if (tag !== 'Archived' && isArchived) continue
-          else if (tag === 'Reading List' && isRead) continue
-          else {
+          if (tag !== 'Archived' && archived[msg]) continue
+          else if (tag === 'Reading List' && read[msg]) continue
+          else if (index[id]['tags'][tag][msg]) {
             msgs.push({
               key: msg,
               value: {
