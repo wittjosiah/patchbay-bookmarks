@@ -23,7 +23,7 @@ exports.create = (api) => {
       }, 'Edit'),
       h('a.save', {
         href: '#',
-        'ev-click': () => save(msg, null, [], "")
+        'ev-click': () => save(msg, [ id ], [ 'Reading List' ], '')
       }, 'Save')
     )
   })
@@ -31,7 +31,7 @@ exports.create = (api) => {
   function save (msg, recps, bookmarkTags, notes) {
     var tags = bookmarkTags
     if (!tags || tags.length === 0) {
-      tags = ['Reading List']
+      tags = [ 'Reading List' ]
     }
     return api.bookmark.html.confirm({
       messageId: msg.key,
