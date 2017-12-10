@@ -54,8 +54,16 @@ exports.create = function(api) {
       )
     )
     const currentTag = h('h2', tag)
+    const areMessages = computed(
+      [api.bookmark.obs.taggedMessages(id, tag)],
+      msgs => msgs.length > 0
+    )
     const { container, content } = api.app.html.scroller({
-      prepend: [ creator, tagsBar, currentTag ]
+      prepend: [ creator, tagsBar, currentTag ],
+      append: when(areMessages,
+        [],
+        [ h('h4', 'No messages in tag!') ]
+      )
     })
 
     pull(
