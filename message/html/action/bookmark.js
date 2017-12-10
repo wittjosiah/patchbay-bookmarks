@@ -4,7 +4,8 @@ var nest = require('depnest')
 exports.needs = nest({
   'keys.sync.id': 'first',
   'bookmark.obs.bookmark': 'first',
-  'bookmark.async.save': 'first'
+  'bookmark.async.save': 'first',
+  'bookmark.html.confirm': 'first'
 })
 
 exports.gives = nest('message.html.action')
@@ -13,40 +14,26 @@ exports.create = (api) => {
   return nest('message.html.action', msg => {
     var id = api.keys.sync.id()
     var bookmark = api.bookmark.obs.bookmark(msg.key, id)
+    console.log(bookmark())
     var saved = computed([bookmark.tags], tags => isSaved(tags))
     return when(saved,
-      h('a.archive', {
+      h('a.edit', {
         href: '#',
-        'ev-click': () => save(msg, bookmark.recps(), bookmark.tags(), false)
-      }, 'Archive'),
+        'ev-click': () => save(msg, bookmark.recps(), bookmark.tags(), bookmark.notes())
+      }, 'Edit'),
       h('a.save', {
         href: '#',
-        'ev-click': () => save(msg, null, [], true)
+        'ev-click': () => save(msg, null, [], "")
       }, 'Save')
     )
   })
 
-  function save (msg, recps, bookmarkTags, status = true) {
-    var currentTags = bookmarkTags || []
-    var tags
-    if (status) {
-      if (currentTags.includes('Archived')) {
-        tags = currentTags.filter(t => t !== 'Archived')
-      } else {
-        tags = currentTags
-      }
-      tags.push('Reading List')
-    } else {
-      tags = currentTags
-      tags.push('Archived')
+  function save (msg, recps, bookmarkTags, notes) {
+    var tags = bookmarkTags
+    if (!tags || tags.length === 0) {
+      tags = ['Reading List']
     }
-
-    var notes = ""
-    if (msg.value && msg.value.content && msg.value.content.text) {
-      notes = msg.value.content.text.substring(0, 30) + "..."
-    }
-
-    api.bookmark.async.save({
+    return api.bookmark.html.confirm({
       messageId: msg.key,
       recps,
       notes,
