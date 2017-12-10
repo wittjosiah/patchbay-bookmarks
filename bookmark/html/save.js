@@ -2,7 +2,7 @@ const { h, computed, when, Value, Struct } = require('mutant')
 const nest = require('depnest')
 
 exports.needs = nest({
-  'bookmark.async.save': 'first',
+  'save.async.save': 'first',
   'blob.html.input': 'first',
   'message.html.confirm': 'first',
   'keys.sync.id': 'first'
@@ -29,7 +29,7 @@ exports.create = function(api) {
     }, 'Cancel')
 
     const saveButton = h('button.save', { 'ev-click': () =>
-      api.bookmark.async.save({
+      api.save.async.save({
         recps: bookmark.public() ? null : [ id ],
         messageId: bookmark.messageId(),
         notes: bookmark.notes(),

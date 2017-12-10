@@ -4,8 +4,10 @@ const ref = require('ssb-ref')
 
 exports.needs = nest({
   'about.html.avatar': 'first',
-  'bookmark.obs.bookmark': 'first',
-  'bookmark.obs.struct': 'first',
+  'save.obs': {
+    save: 'first',
+    struct: 'first'
+  },
   'bookmark.html': {
     action: 'map',
     notes: 'first',
@@ -23,14 +25,12 @@ exports.gives = nest('bookmark.html.render')
 
 exports.create = function(api) {
 
-  return nest({
-    'bookmark.html.render': renderBookmark
-  })
+  return nest({ 'bookmark.html.render': renderBookmark })
 
   function renderBookmark(msg, { pageId } = {}) {
     const id = api.keys.sync.id()
-    const bookmark = api.bookmark.obs.bookmark(msg.key, id)
-    const edited = api.bookmark.obs.struct()
+    const bookmark = api.save.obs.save(msg.key, id)
+    const edited = api.save.obs.struct()
     for (var i in bookmark.recps()) {
       edited.recps.add(bookmark.recps()[i])
     }

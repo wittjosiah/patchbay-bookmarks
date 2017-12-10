@@ -5,7 +5,7 @@ const { h, Value, computed } = require('mutant')
 exports.gives = nest('bookmark.html.confirm')
 
 exports.needs = nest({
-  'bookmark.async.save': 'first',
+  'save.async.save': 'first',
   'bookmark.html': {
     notes: 'first',
     tags: 'first'
@@ -18,9 +18,7 @@ exports.needs = nest({
 })
 
 exports.create = function (api) {
-  return nest({
-    'bookmark.html': { confirm }
-  })
+  return nest({ 'bookmark.html.confirm': confirm })
 
   function confirm (content, cb) {
     cb = cb || function () {}
@@ -38,7 +36,7 @@ exports.create = function (api) {
     var okay = h('button.save', {
       'ev-click': () => {
         lb.remove()
-        api.bookmark.async.save({
+        api.save.async.save({
           messageId: content.messageId,
           recps: content.recps,
           tags: tags(),

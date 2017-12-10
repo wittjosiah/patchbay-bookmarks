@@ -3,8 +3,7 @@ var nest = require('depnest')
 
 exports.needs = nest({
   'keys.sync.id': 'first',
-  'bookmark.obs.bookmark': 'first',
-  'bookmark.async.save': 'first',
+  'save.obs.save': 'first',
   'bookmark.html.confirm': 'first'
 })
 
@@ -13,8 +12,7 @@ exports.gives = nest('message.html.action')
 exports.create = (api) => {
   return nest('message.html.action', msg => {
     var id = api.keys.sync.id()
-    var bookmark = api.bookmark.obs.bookmark(msg.key, id)
-    console.log(bookmark())
+    var bookmark = api.save.obs.save(msg.key, id)
     var saved = computed([bookmark.tags], tags => isSaved(tags))
     return when(saved,
       h('a.edit', {

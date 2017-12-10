@@ -14,17 +14,19 @@ exports.gives = nest({
 exports.needs = nest({
   'app.html.scroller': 'first',
   'app.sync.goTo': 'first',
-  'bookmark.pull.find': 'first',
-  'bookmark.obs': {
-    'tagsFrom': 'first',
-    'taggedMessages': 'first'
-  },
   'bookmark.html': {
     save: 'first',
     render: 'first',
     tagsBar: 'first'
   },
   'keys.sync.id': 'first',
+  save: {
+    'pull.find': 'first',
+    'obs': {
+      'tagsFrom': 'first',
+      'taggedMessages': 'first'
+    }
+  },
   'sbot.async.get': 'first'
 })
 
@@ -49,13 +51,13 @@ exports.create = function(api) {
     const defaultTags = [ 'Reading List', 'Read', 'Favourites', 'Archived' ]
     const tagsBar = api.bookmark.html.tagsBar(
       computed(
-        [api.bookmark.obs.tagsFrom(id)],
+        [api.save.obs.tagsFrom(id)],
         tags => tags.filter(t => defaultTags.indexOf(t) < 0)
       )
     )
     const currentTag = h('h2', tag)
     const areMessages = computed(
-      [api.bookmark.obs.taggedMessages(id, tag)],
+      [api.save.obs.taggedMessages(id, tag)],
       msgs => msgs.length > 0
     )
     const { container, content } = api.app.html.scroller({
@@ -67,7 +69,7 @@ exports.create = function(api) {
     })
 
     pull(
-      api.bookmark.pull.find(),
+      api.save.pull.find(),
       pull.map(index => {
         const msgs = []
         const archived = index[id]['tags']['Archived'] || {}

@@ -2,8 +2,10 @@ var { h, computed, when } = require('mutant')
 var nest = require('depnest')
 
 exports.needs = nest({
-  'bookmark.obs.bookmark': 'first',
-  'bookmark.async.save': 'first',
+  save: {
+    'obs.save': 'first',
+    'async.save': 'first'
+  },
   'keys.sync.id': 'first'
 })
 
@@ -15,7 +17,7 @@ exports.create = (api) => {
   function tag(tagValue, doActionText, undoActionText) {
     return function(msgId) {
       const id = api.keys.sync.id()
-      var bookmark = api.bookmark.obs.bookmark(msgId, id)
+      var bookmark = api.save.obs.save(msgId, id)
       var tagged = computed([bookmark.tags, tagValue], isTagged)
       return when(tagged,
         h('button.undoAction', {
@@ -37,7 +39,7 @@ exports.create = (api) => {
     } else {
       tags = currentTags.filter(t => t !== tagValue)
     }
-    api.bookmark.async.save({ recps, messageId, tags }, console.log)
+    api.save.async.save({ recps, messageId, tags }, console.log)
   }
 }
 
