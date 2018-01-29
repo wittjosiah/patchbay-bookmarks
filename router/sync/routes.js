@@ -3,7 +3,7 @@ const nest = require('depnest')
 exports.gives = nest('router.sync.routes')
 
 exports.needs = nest({
-  'app.page.bookmarks': 'first',
+  'app.page.tags': 'first',
 })
 
 exports.create = (api) => {
@@ -12,7 +12,7 @@ exports.create = (api) => {
 
     // loc = location
     const routes = [
-      [ loc => loc.page === 'bookmarks', pages.bookmarks ],
+      [ loc => loc.page === 'tags', pages.tags ],
     ]
 
     return [...routes, ...sofar]
